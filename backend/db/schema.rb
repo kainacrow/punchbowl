@@ -10,10 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_28_154704) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_15_184344) do
+  create_table "locations", force: :cascade do |t|
+    t.string "location_id"
+    t.string "name"
+    t.float "lat"
+    t.float "lon"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_locations_on_location_id", unique: true
+  end
+
+  create_table "user_favorites", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "location_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_favorites_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  create_table "weathers", force: :cascade do |t|
+    t.string "location_id"
+    t.json "json_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "user_favorites", "users"
 end

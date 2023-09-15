@@ -5,12 +5,35 @@ class Api::WeathersController < ApplicationController
     client = OpenWeather::Client.new
     data = client.one_call(lat: location.lat, lon: location.lon, exclude: ['minutely', 'hourly', 'alerts'])
 
-    render json: data
+    if data['current'].present?
+      render json: data
+    else
+      render json: { error: 'Current weather data not available' }, status: :bad_request
+    end
   rescue OpenWeather::Errors::Fault
     logger.error "Error accessing OpenWeather API"
     head :bad_request
   end
 
+  private
+
+  def fetch_cached_weather_data(location)
+    Rails.cache.fetch("weather_data_#{location.location_id}", expires_in: 30.minutes) do
+      if (cached_data = Rails.cache.read("weather_data_#{location.location_id}"))
+        cached_data
+      else
+        weather_record = Weather.find_by(location_id: location.location_id)
+
+        if weather_record
+          Rails.cache.write("weather_data_#{location.location_id}", weather_record.json_data)
+          weather_record.json_data
+        else
+          WeatherFetchJob.perform_later(location)
+          {}
+        end
+      end
+    end
+  end
 end
 
 __END__

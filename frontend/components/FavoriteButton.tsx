@@ -4,8 +4,6 @@ import { useUserFavorites } from "../hooks/useFavorites";
 export default function FavoriteButton({ isFavorite, locationId }: { isFavorite: boolean, locationId: string }) {
   const { mutate } = useUserFavorites();
 
-  console.log('locationId:',locationId);
-  console.log('isFavorite', isFavorite)
   const handleToggleFavorite = () => {
     if (isFavorite) {
       fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/user_favorites/${locationId}`, {
