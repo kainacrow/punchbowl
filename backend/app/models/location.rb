@@ -1,21 +1,50 @@
-class Location < Struct.new(:name, :lat, :lon)
-  LOCATIONS = HashWithIndifferentAccess.new({
-    new_york: self.new('New York, New York', 40.7128, -74.0060),
-    boston: self.new('Boston, Massachusetts', 42.3601, -71.0589),
-    chicago: self.new('Chicago, Illinois', 41.8781, -87.6298),
-    denver: self.new('Denver, Colorado', 39.7392, -104.9903),
-    houston: self.new('Houston, Texas', 29.7604, -95.3698),
-    seattle: self.new('Seattle, Washington', 47.6062, -122.3321),
-    los_angeles: self.new('Los Angeles, California', 34.0522, -118.2437)
-  })
+class Location < ActiveRecord::Base
+  before_create :generate_location_id
 
-  def self.get(slug)
-    LOCATIONS[slug]
+  validates :location_id, presence: true
+  validates :name, presence: true
+  validates :lat, presence: true
+  validates :lon, presence: true
+
+  has_many :user_favorites
+  has_many :favorited_by, through: :user_favorites, source: :user
+
+  private
+  def generate_location_id
+    self.location_id ||= name.downcase.gsub(' ', '_').split(',').first
   end
 
-  def self.lookup(lat:, lon:)
-    city = Geocoder.search([lat, lon]).first.city
-    self.new(city, lat, lon)
+  def self.lookup_by_coordinates(lat:, lon:)
+    location = find_or_initialize_by(lat: lat, lon: lon)
+
+    if location.new_record?
+      city = Geocoder.search([lat, lon]).first.city
+      state = Geocoder.search([lat, lon]).first.state
+      location.name = city + ', ' + state
+      location.send(:generate_location_id)
+    end
+
+    location.save
+    location
+  rescue
+    nil
+  end
+
+  def self.lookup_by_city_state(city_state)
+    location = find_or_initialize_by(name: city_state)
+    if location.new_record?
+      city = Geocoder.search(city_state).first.city
+      state = Geocoder.search(city_state).first.state
+      lat = Geocoder.search(city_state).first.coordinates[0]
+      lon = Geocoder.search(city_state).first.coordinates[1]
+      location.name = city + ', ' + state
+      location.lat = lat
+      location.lon = lon
+      location.send(:generate_location_id)
+    end
+
+    location.save
+    location
   rescue
     nil
   end

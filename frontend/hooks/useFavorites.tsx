@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 export type UserFavorite = {
   id: number;
-  location_id: number;
+  location_id: string;
   user_id: number;
 };
 

@@ -73,6 +73,11 @@ GEM
     concurrent-ruby (1.1.10)
     crass (1.0.6)
     erubi (1.11.0)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
     faraday (1.10.2)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
@@ -191,6 +196,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.13.0)
   byebug
+  factory_bot_rails (~> 6.2)
   geocoder
   listen (~> 3.7)
   open-weather-ruby-client

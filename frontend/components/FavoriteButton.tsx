@@ -1,9 +1,11 @@
 
 import { useUserFavorites } from "../hooks/useFavorites";
 
-export default function FavoriteButton({ isFavorite, locationId }: { isFavorite: boolean, locationId: number }) {
+export default function FavoriteButton({ isFavorite, locationId }: { isFavorite: boolean, locationId: string }) {
   const { mutate } = useUserFavorites();
 
+  console.log('locationId:',locationId);
+  console.log('isFavorite', isFavorite)
   const handleToggleFavorite = () => {
     if (isFavorite) {
       fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/user_favorites/${locationId}`, {
@@ -23,6 +25,7 @@ export default function FavoriteButton({ isFavorite, locationId }: { isFavorite:
     }
   }
 
+  console.log('isFavorite',isFavorite)
   return (
     <button
       className="px-4 py-2 font-semibold text-sm bg-sky-500 text-white rounded-none"

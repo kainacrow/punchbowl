@@ -7,6 +7,7 @@ import { SessionContext } from "../../components/SessionProvider";
 import { CurrentWeather } from "../../components/CurrentWeather";
 import { useLocation } from "../../hooks/useLocations";
 import { useWeather } from "../../hooks/useWeather";
+import {useUserFavorites} from "../../hooks/useFavorites";
 
 export default function WeatherPage() {
   const router = useRouter();
@@ -15,22 +16,21 @@ export default function WeatherPage() {
   const { setLocationSlug, locationSlug } = useContext(SessionContext);
   const { name } = useLocation(locationSlug) ?? {};
   const { weather } = useWeather(locationSlug);
-  // const { favorites } = useUserFavorites();
+  const { favorites } = useUserFavorites();
 
-  const isFavorite = false; // Remove this line and uncomment the section below when you implement favorites.
-  // const isFavorite = useMemo(() => {
-  //   return favorites?.some((favorite) => favorite.location_id === id);
-  // }, [favorites, id])
+  const isFavorite = useMemo(() => {
+    return favorites?.some((favorite) => favorite.location_id === slug);
+  }, [favorites, slug])
 
   useEffect(() => {
     setLocationSlug(slug);
   }, [slug]);
-
+  
   return (
     <div className="space-y-4">
       <LocationHeading name={name} />
       <CurrentWeather weather={weather} />
-      {/* <FavoriteButton isFavorite={isFavorite} locationId={id} /> */}
+      <FavoriteButton isFavorite={isFavorite} locationId={slug} />
     </div>
   );
 }

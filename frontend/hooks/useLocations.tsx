@@ -1,21 +1,46 @@
+import {useEffect, useState} from "react";
+
 export type Location = {
   slug: string;
   name: string;
   id: number;
 };
 
-const locations: Array<Location> = [
-  { slug: "new_york", name: "New York", id: 1 },
-  { slug: "boston", name: "Boston", id: 2 },
-  { slug: "chicago", name: "Chicago", id: 3 },
-];
-
 export const useLocations = () => {
-  // TODO: Fetch this data from the API as a React Hook.
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/locations`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        const locationsData = data.map((item: any) => ({
+          slug: item.location_id,
+          name: item.name,
+          id: item.id,
+        }));
+
+        setLocations(locationsData);
+        setIsLoading(false);
+      } catch (error) {
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return {
     locations,
-    isLoading: false,
-    isError: false,
+    isLoading,
+    isError,
   };
 };
 

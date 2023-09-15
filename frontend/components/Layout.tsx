@@ -24,14 +24,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { locations } = useLocations();
   const { locationSlug } = useContext(SessionContext);
-  // const { favorites } = useUserFavorites();
-
+  const { favorites } = useUserFavorites();
   const isSelected = ({ slug }: Location) => slug === locationSlug;
 
-  const favoriteLocationIds = []; // Remove this line and uncomment the section below when you implement favorites.
-  // const favoriteLocationIds = useMemo(() => {
-  //   return favorites?.map(({ location_id }) => location_id) ?? [];
-  // }, [favorites]);
+  const favoriteLocationIds = useMemo(() => {
+    return favorites?.map(({ location_id }) => location_id) ?? [];
+  }, [favorites]);
 
   return (
     <>
@@ -119,7 +117,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                           <div className="flex grow justify-end">
                             <StarIcon
                               className={classNames(
-                                favoriteLocationIds.includes(location.id) ? "text-red-500" : "text-gray-400",
+                                favoriteLocationIds.includes(String(location.slug)) ? "text-red-500" : "text-gray-400",
                                 'h-6 w-6'
                               )}
                             />
@@ -170,7 +168,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                         <div className="flex grow justify-end">
                           <StarIcon
                             className={classNames(
-                              favoriteLocationIds.includes(location.id) ? "text-red-500" : "text-gray-400",
+                              favoriteLocationIds.includes(String(location.slug)) ? "text-red-500" : "text-gray-400",
                               'h-6 w-6'
                             )}
                           />

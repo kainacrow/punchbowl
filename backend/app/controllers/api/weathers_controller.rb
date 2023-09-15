@@ -1,7 +1,7 @@
 class Api::WeathersController < ApplicationController
 
   def show
-    location = Location.get(params[:location_id])
+    location = Location.find_by(location_id: params[:location_id])
     client = OpenWeather::Client.new
     data = client.one_call(lat: location.lat, lon: location.lon, exclude: ['minutely', 'hourly', 'alerts'])
 
