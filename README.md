@@ -19,7 +19,7 @@ the required steps, and the overall quality.
 
 To return your code challenge:
 
-1. Remove the `nopude_modules` directories
+1. Remove the `node_modules` directories
 2. Archive your project as `.zip` or `.tar.gz` file.
 3. Email your archived project to your recruiting contact. You may need to upload your
 archive to a file sharing service like Dropbox or Google Drive.
